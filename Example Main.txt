@@ -1,0 +1,24 @@
+//pragma once
+//#include <iostream>
+//#include "World.hpp"
+//#include "Entity.hpp"
+
+
+//int main(int argc, char *argv[])
+//{
+	// Create the world
+	//World* world = new World();
+	//SomeExampleSystem* someExampleSystem = new SomeExampleSystem(maybeAParam);
+	//world->AddSystem(someExampleSystem);
+	//Entity* aTestEntity = world->CreateEntity("A name for entity");
+	//aTestEntity->AttachComponent(new SomeComponent1(param?,param?));
+	//aTestEntity->AttachComponent(new SomeComponent2());
+	
+	//while(someLoop)
+	//{
+		//world->Update(someFrameTime);
+	//}
+		
+	//delete world;
+	//return 0;
+//}
