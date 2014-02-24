@@ -26,10 +26,14 @@ World::~World(void)
 	newEntities.clear();
 	entities.clear();
 
-	for(unsigned int i=0; i < systems.size(); i++)
-		delete systems[i];
+	for(unsigned int i=0; i < logicSystems.size(); i++)
+		delete logicSystems[i];
 
-	systems.clear();
+	for(unsigned int i=0; i < renderSystems.size(); i++)
+		delete renderSystems[i];
+
+	logicSystems.clear();
+	renderSystems.clear();
 }
 
 /// Created a new entity on the heap.
@@ -70,17 +74,34 @@ void World::RemoveEntity(Entity* entity)
 	}
 }
 
-/// Runs all attached systems.
+/// Runs systems which control game logic (movement, interaction, input, etc).
 ///
-/// Will first update all systems with their new entities and then will being
-/// calling all the system update methods.
+/// Will update all systems with their new entities and then will call all the
+///system update methods.
 ///
 /// @param float Current frame time.
 /// @return None
-void World::Update(float frameTime)
+void World::UpdateLogic(float frameTime)
 {
-	UpdateSystemsWithNewEntities();
-	UpdateSystems();
+	for(unsigned int i = 0; i < logicSystems.size(); i++)
+	{
+		logicSystems[i]->Process(frameTime);
+	}
+}
+
+/// Runs systems which control object rendering (sprites, textures, 3d models, etc).
+///
+/// Will update all systems with their new entities and then will call all the
+///system update methods.
+///
+/// @param float Current frame time.
+/// @return None
+void World::UpdateRenders(float frameTime)
+{
+	for(unsigned int i = 0; i < renderSystems.size(); i++)
+	{
+		renderSystems[i]->Process(frameTime);
+	}
 }
 
 
@@ -103,11 +124,20 @@ void World::UpdateSystemsWithNewEntities(void)
 	{
 		for(unsigned int i = 0; i < newEntities.size(); i++)
 		{
-			for(unsigned int j =0; j < systems.size(); j++)
+			for(unsigned int j =0; j < logicSystems.size(); j++)
 			{
-				if((newEntities[i]->GetBitMask() & systems[j]->GetBitMask()) == systems[j]->GetBitMask())
+				if((newEntities[i]->GetBitMask() & logicSystems[j]->GetBitMask()) == logicSystems[j]->GetBitMask())
 				{
-					systems[j]->AddEntity(newEntities[i]);
+					logicSystems[j]->AddEntity(newEntities[i]);
+					entities.push_back(newEntities[i]);
+				}
+			}
+
+			for(unsigned int j =0; j < renderSystems.size(); j++)
+			{
+				if((newEntities[i]->GetBitMask() & renderSystems[j]->GetBitMask()) == renderSystems[j]->GetBitMask())
+				{
+					renderSystems[j]->AddEntity(newEntities[i]);
 					entities.push_back(newEntities[i]);
 				}
 			}
@@ -116,26 +146,20 @@ void World::UpdateSystemsWithNewEntities(void)
 	}
 }
 
-/// Runs all attached systems.
-///
-/// Each system will have a chance to process any entities it may have stored.
-/// All systems will be called regardless if they have appropriate entities or not.
-///
-/// @param None
-/// @return None
-void World::UpdateSystems(void)
-{
-	for(unsigned int i = 0; i < systems.size(); i++)
-	{
-		systems[i]->ProcessComponents();
-	}
-}
-
-/// Add a pointer to a newly created system on the heap.
+/// Add a pointer to a newly created logic based system on the heap.
 ///
 /// @param BaseSystem* A pointer to a system on the heap.
 /// @return None
-void World::AddSystem(BaseSystem* system)
+void World::AddLogicSystem(BaseSystem* system)
 {
-	systems.push_back(system);
+	logicSystems.push_back(system);
+}
+
+/// Add a pointer to a newly created render based system on the heap.
+///
+/// @param BaseSystem* A pointer to a system on the heap.
+/// @return None
+void World::AddRenderSystem(BaseSystem* system)
+{
+	renderSystems.push_back(system);
 }

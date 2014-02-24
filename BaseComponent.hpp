@@ -15,6 +15,16 @@ namespace ComponentBitMasks
 		ChangeColorOnMouseOver = 128,
 		MouseClickComponent = 256,
 		ChangeColorOnMousePress = 512,
+		MousePressImageComponent = 1024,
+		ControllerComponent = 2048,
+		WalkComponent = 4096,
+		RunComponent = 8192,
+		JumpComponent = 16384,
+		DuckComponent = 32768,
+		AbilityComponent = 65536,
+		SpeedComponent = 131072,
+		VelocityComponent = 262144,
+		InputComponent = 524288,
 	};
 };
 
